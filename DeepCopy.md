@@ -1,0 +1,171 @@
+[toc]
+# Deep Copy
+## leetcode138. Copy List with Random Pointer
+[138. Copy List with Random Pointer](https://leetcode.com/problems/copy-list-with-random-pointer/description/)
+
+Deep Copy 有 random pointer 的 linked list
+
+```java
+/*
+// Definition for a Node.
+class Node {
+    int val;
+    Node next;
+    Node random;
+
+    public Node(int val) {
+        this.val = val;
+        this.next = null;
+        this.random = null;
+    }
+}
+*/
+```
+
+**Approach 1: Iterative with O(N) Space**
+```java
+class Solution {
+    public Node copyRandomList(Node head) {
+        HashMap<Node, Node> originToClone = new HashMap<>();
+        // 第一次遍历，先把所有节点克隆出来
+        for (Node p = head; p != null; p = p.next) {
+            if (!originToClone.containsKey(p)) {
+                originToClone.put(p, new Node(p.val));
+            }
+        }
+        // 第二次遍历，把克隆节点的结构连接好
+        for (Node p = head; p != null; p = p.next) {
+            if (p.next != null) {
+                originToClone.get(p).next = originToClone.get(p.next);
+            }
+            if (p.random != null) {
+                originToClone.get(p).random = originToClone.get(p.random);
+            }
+        }
+        // 返回克隆之后的头结点
+        return originToClone.get(head);
+    }
+}
+```
+
+**Approach 2: Iterative with O(1) Space**
+通过在原始链表中穿插克隆节点，然后更新克隆节点的随机和下一个指针，最后拆分链表为原始链表和克隆链表三个主要步骤来实现深拷贝。        
+这个解法是通过三个主要步骤来实现带有随机指针的链表的深拷贝：
+
+1. **穿插克隆节点**:
+   - 遍历原始链表，对每个节点创建一个新的克隆节点，克隆节点的`val`属性与原节点相同。
+   - 将克隆节点插入到原节点和原节点的下一个节点之间。例如，如果原始链表是`A->B->C`，那么插入克隆节点后，链表变为`A->A'->B->B'->C->C'`，其中`A'`是`A`的克隆，以此类推。
+
+2. **设置克隆节点的随机指针**:
+   - 再次遍历链表，这次是为了更新每个克隆节点的`random`指针。由于克隆节点是紧跟在原节点后面的，所以原节点的`random`指针指向的节点的下一个节点（即`random.next`），就是克隆节点应该指向的`random`节点。
+   - 实现方式为：`ptr.next.random = (ptr.random != null) ? ptr.random.next : null;`，确保如果原节点的`random`指向`null`，克隆节点的`random`也应该指向`null`。
+
+3. **拆分原始链表和克隆链表**:
+   - 最后一步是将这个交错的链表拆分成原始链表和克隆链表。遍历链表，将原始节点连接起来，跳过克隆节点，同时也将克隆节点连接起来，形成两个独立的链表。
+   - 在拆分过程中，通过`ptr_old_list.next = ptr_old_list.next.next;`和`ptr_new_list.next = (ptr_new_list.next != null) ? ptr_new_list.next.next : null;`实现，这样原始链表的节点只会指向原始节点，克隆链表的节点只会指向克隆节点。
+
+通过上述步骤，就可以不需要额外的哈希表或映射来存储原节点和克隆节点的对应关系，直接在原链表的基础上完成克隆，并且正确设置了所有的`next`和`random`指针。最后返回克隆链表的头节点`head_old`。
+
+```java
+/*
+// Definition for a Node.
+class Node {
+    public int val;
+    public Node next;
+    public Node random;
+
+    public Node() {}
+
+    public Node(int _val,Node _next,Node _random) {
+        val = _val;
+        next = _next;
+        random = _random;
+    }
+};
+*/
+public class Solution {
+  public Node copyRandomList(Node head) {
+
+    if (head == null) {
+      return null;
+    }
+
+    // Creating a new weaved list of original and copied nodes.
+    // a -> b -> c
+    // a -> a' -> b -> b' -> c -> c'
+    Node ptr = head;
+    while (ptr != null) {
+      Node newNode = new Node(ptr.val);
+      newNode.next = ptr.next;
+      ptr.next = newNode;
+      ptr = newNode.next;
+    }
+
+    ptr = head;
+
+    // Now link the random pointers of the new nodes created
+    while (ptr != null) {
+      ptr.next.random = (ptr.random != null) ? ptr.random.next : null;
+      ptr = ptr.next.next;
+    }
+
+    // Unweave the linked list to get back the original linked list and the cloned list.
+    // i.e. A->A'->B->B'->C->C' would be broken to A->B->C and A'->B'->C'
+    Node ptr_old_list = head; // A->B->C
+    Node ptr_new_list = head.next; // A'->B'->C'
+    Node head_old = head.next;
+    while (ptr_old_list != null) {
+      ptr_old_list.next = ptr_old_list.next.next;
+      ptr_new_list.next = (ptr_new_list.next != null) ? ptr_new_list.next.next : null;
+      ptr_old_list = ptr_old_list.next;
+      ptr_new_list = ptr_new_list.next;
+    }
+    return head_old;
+  }
+}
+```
+
+## leetcode133. Clone Graph
+
+Return a deep copy (clone) of the graph.
+
+```java
+class Node {
+    public int val;
+    public List<Node> neighbors;
+}
+```
+
+1. 先 clone 放入 map & queue
+2. 从 queue 里取出来，遍历其 neighbors.
+   1. 连接
+   2. 加入将没有clone 过的 node 放入 map & queue
+
+
+```java
+class Solution {
+    public Node cloneGraph(Node node) {
+        // corner case 
+        if (node == null) {
+            return node;
+        }
+        Queue<Node> queue = new ArrayDeque<>();
+        Map<Node, Node> map = new HashMap<>();
+        queue.add(node);
+        map.put(node, new Node(node.val, new ArrayList<>()));
+        while (!queue.isEmpty()) {
+            Node cur = queue.poll();
+            for (Node n : cur.neighbors) {
+                // clone 当前节点 的 _neighbors
+                if (!map.containsKey(n)) {
+                    queue.add(n);
+                    map.put(n, new Node(n.val, new ArrayList<>()));
+                }
+                // 需要讲新的节点加入 neighbor
+                map.get(cur).neighbors.add(map.get(n));
+            }
+        }
+        return map.get(node);
+    }
+}
+```

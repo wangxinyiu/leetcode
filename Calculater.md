@@ -1,0 +1,58 @@
+# Calculator Question
+[227. Basic Calculator II](https://leetcode.com/problems/basic-calculator-ii/description/)
+
+## leetcode 227. Basic Calculator II
+
+有 "+, -, *, /, 空格" 没有括号 的 calculatetor
+
+**Example**
+Input: s = "3+2*2", " 3/2 ", " 3+5 / 2"
+Output: 7, 1, 5
+```java
+class Solution {
+    public int calculate(String s) {
+        // 当我遇到下一个符号的时候
+        // 证明 我已经有上俩个数字 和其需要连接的符号
+        // 3 + 2 * 2
+        //       i
+        // pre: 3
+        // cur: 2
+        // operation: +
+        // 这个时候如果 operation 是加减的话 -> 证明 pre 不会被乘除操作，既可以加入 sum
+        //        如果 operation 是乘除的话 -> 则 pre 需要和 cur 被处理，当做新的 pre，等待下次处理
+        int pre = 0;
+        int cur = 0;
+        int sum = 0;
+        char operation = '+';
+        for (int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+            if (Character.isDigit(c)) {
+                cur = cur * 10 + (int)(c - '0');
+            }
+            // 当 i 走到最后一个的时候，不管是空格还是数字 -> 想当于遇到下一个 operation
+            // 可以用俩个 if 语句
+            if (!Character.isDigit(c) && c != ' ' || i == s.length() - 1) {
+                // 如果 operation 是 - 的话，将 cur 变成负数赋给 pre
+                // 可以避免 出了 for 循环后 最后加 pre 的时候的判断
+                if (operation == '+') {
+                    sum += pre;  
+                    pre = cur;
+                } else if (operation == '-') {
+                    sum += pre;
+                    pre = -cur;
+                } else if (operation == '*') {
+                    // 改的是 pre 的值
+                    pre = pre * cur;
+                } else {
+                    pre = pre / cur;
+                }
+                cur = 0;
+                operation = c;
+            }
+        }
+        // 最后还有一个 pre 没有被处理
+        sum += pre;
+        return sum;
+    }
+}
+```
