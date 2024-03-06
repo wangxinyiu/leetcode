@@ -1,7 +1,6 @@
-[toc]
 # Deep Copy
 ## leetcode138. Copy List with Random Pointer
-[138. Copy List with Random Pointer](https://leetcode.com/problems/copy-list-with-random-pointer/description/)
+[Copy List with Random Pointer](https://leetcode.com/problems/copy-list-with-random-pointer/description/)
 
 Deep Copy 有 random pointer 的 linked list
 
