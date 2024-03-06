@@ -1,0 +1,10 @@
+# Binary Search ⚪ 🔵 🔴
+1. ⚪ [laicode14. Classical Binary Search](laicode14.%20Classical%20Binary%20Search.md)
+2. 🔵 [laicode267. Search In Sorted Matrix I](./laicode267.%20Search%20In%20Sorted%20Matrix%20I.md)
+3. ⚪ [laicode17. Closest In Sorted Array](./laicode17.%20Closest%20In%20Sorted%20Array.md)
+4. ⚪ [laicode15. First Occurrence](./laicode15.%20First%20Occurrence.md)
+5. 🔴 [laicode19. K Closest In Sorted Array](./laicode19.%20K%20Closest%20In%20Sorted%20Array.md)
+6. 🔵 [leetcode658. Find K Closest Elements](./leetcode658.%20Find%20K%20Closest%20Elements.md)
+7. 🔴 [laicode20. Search In Unknown Sized Sorted Array](./laicode20.%20Search%20In%20Unknown%20Sized%20Sorted%20Array.md)
+8. 🔴 [Divide chocolate to kids evenly](./Divide%20chocolate%20to%20kids%20evenly.md)
+9. [Binary Search Summay](./Binary%20Search%20Summary.md)
